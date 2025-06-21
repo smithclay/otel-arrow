@@ -174,7 +174,6 @@ impl local::Exporter<OTAPData> for OTAPExporter {
 
 #[cfg(test)]
 mod tests {
-    use std::future::Future;
     use crate::grpc::OTAPData;
     use crate::mock::{
         ArrowLogsServiceMock, ArrowMetricsServiceMock, ArrowTracesServiceMock,
@@ -189,6 +188,7 @@ mod tests {
     use otap_df_engine::exporter::ExporterWrapper;
     use otap_df_engine::testing::exporter::TestContext;
     use otap_df_engine::testing::exporter::TestRuntime;
+    use std::future::Future;
     use std::net::SocketAddr;
     use tokio::net::TcpListener;
     use tokio::runtime::Runtime;

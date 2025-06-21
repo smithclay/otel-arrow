@@ -50,7 +50,12 @@ impl MessageInfo {
                     None
                 }
             })
-            .unwrap_or_else(|| panic!("Missing #[qualified(\"...\")] attribute on struct {}", outer_name));
+            .unwrap_or_else(|| {
+                panic!(
+                    "Missing #[qualified(\"...\")] attribute on struct {}",
+                    outer_name
+                )
+            });
 
         // Get required parameters for this type.
         let param_names: Vec<_> = otlp_model::REQUIRED_PARAMS
@@ -97,10 +102,13 @@ impl MessageInfo {
         let param_fields: Vec<_> = param_names
             .iter()
             .filter_map(|param_name| {
-                fields_original.iter().find(|info| {
-                    let ident = info.ident.to_string();
-                    info.is_param && ident == *param_name
-                }).cloned()
+                fields_original
+                    .iter()
+                    .find(|info| {
+                        let ident = info.ident.to_string();
+                        info.is_param && ident == *param_name
+                    })
+                    .cloned()
             })
             .collect();
         let builder_fields: Vec<_> = fields_original

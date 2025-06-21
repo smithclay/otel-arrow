@@ -92,7 +92,8 @@ pub fn builder_oneof_constructors<F>(
     create_constructor: F,
 ) -> Vec<TokenStream>
 where
-    F: Fn(String, &[TokenStream], &[TokenStream], &[TokenStream], &[TokenStream]) -> TokenStream + Clone,
+    F: Fn(String, &[TokenStream], &[TokenStream], &[TokenStream], &[TokenStream]) -> TokenStream
+        + Clone,
 {
     let (oneof_path, oneof_cases) = oneof_mapping;
     let oneof_name = oneof_path.split('.').next_back().unwrap();
