@@ -27,11 +27,7 @@ pub fn visitor_method_name(type_name: &Ident) -> Ident {
 pub fn visitable_method_name(type_name: &Ident) -> Ident {
     // Handle raw identifiers by removing the "r#" prefix
     let name_str = type_name.to_string();
-    let clean_name = if name_str.starts_with("r#") {
-        &name_str[2..] // Remove "r#" prefix
-    } else {
-        &name_str
-    };
+    let clean_name = name_str.strip_prefix("r#").unwrap_or(&name_str);
 
     syn::Ident::new(
         &format!("accept_{}", clean_name).to_case(Case::Snake),
@@ -84,6 +80,7 @@ pub fn generic_type_names(count: usize) -> Vec<Ident> {
 }
 
 /// Generate all constructors for a oneof mapping
+#[allow(clippy::too_many_arguments)]
 pub fn builder_oneof_constructors<F>(
     oneof_mapping: &(String, Vec<OneofCase>),
     param_names: &[String],
@@ -95,10 +92,10 @@ pub fn builder_oneof_constructors<F>(
     create_constructor: F,
 ) -> Vec<TokenStream>
 where
-    F: Fn(String, &[TokenStream], &[TokenStream], &[TokenStream], &[TokenStream]) -> TokenStream,
+    F: Fn(String, &[TokenStream], &[TokenStream], &[TokenStream], &[TokenStream]) -> TokenStream + Clone,
 {
     let (oneof_path, oneof_cases) = oneof_mapping;
-    let oneof_name = oneof_path.split('.').last().unwrap();
+    let oneof_name = oneof_path.split('.').next_back().unwrap();
     let oneof_idx = param_names
         .iter()
         .position(|name| name.as_str() == oneof_name)
@@ -116,13 +113,14 @@ where
                 param_args,
                 all_field_initializers,
                 type_params,
-                &create_constructor,
+                create_constructor.clone(),
             )
         })
         .collect()
 }
 
 /// Generate constructor for a single oneof case with shared logic
+#[allow(clippy::too_many_arguments)]
 pub fn builder_oneof_constructor<F>(
     case: &OneofCase,
     oneof_name: &str,
@@ -137,8 +135,8 @@ pub fn builder_oneof_constructor<F>(
 where
     F: Fn(String, &[TokenStream], &[TokenStream], &[TokenStream], &[TokenStream]) -> TokenStream,
 {
-    let case_type = syn::parse_str::<syn::Type>(&case.type_param).unwrap();
-    let variant_path = syn::parse_str::<syn::Expr>(&case.value_variant).unwrap();
+    let case_type = syn::parse_str::<syn::Type>(case.type_param).unwrap();
+    let variant_path = syn::parse_str::<syn::Expr>(case.value_variant).unwrap();
     let suffix = format!("_{}", case.name);
     let oneof_ident = syn::Ident::new(oneof_name, proc_macro2::Span::call_site());
 

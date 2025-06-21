@@ -21,7 +21,6 @@ use otap_df_engine::local::{LocalExporterFactory, exporter as local};
 use otap_df_engine::message::{ControlMsg, Message, MessageChannel};
 use otap_df_otlp::compression::CompressionMethod;
 use serde_json::Value;
-use std::future::Future;
 
 /// Exporter that sends OTAP data via gRPC
 pub struct OTAPExporter {
@@ -176,7 +175,6 @@ impl local::Exporter<OTAPData> for OTAPExporter {
 #[cfg(test)]
 mod tests {
     use std::future::Future;
-
     use crate::grpc::OTAPData;
     use crate::mock::{
         ArrowLogsServiceMock, ArrowMetricsServiceMock, ArrowTracesServiceMock,

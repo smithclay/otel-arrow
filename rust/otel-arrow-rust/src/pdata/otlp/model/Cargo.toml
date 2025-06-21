@@ -3,6 +3,11 @@ name = "otlp-model"
 version = "0.1.0"
 edition = "2024"
 license = "Apache-2.0"
+description = "OpenTelemetry Protocol (OTLP) model types for Rust."
+repository = "https://github.com/open-telemetry/otel-arrow"
+readme = "../../../../../../README.md"
+keywords = ["opentelemetry", "otlp", "protobuf", "model"]
+categories = ["development-tools", "encoding", "parsing"]
 
 [lib]
 

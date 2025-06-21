@@ -3,6 +3,11 @@ name = "otlp-derive"
 version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
+description = "Procedural macros for OpenTelemetry Protocol (OTLP) model types."
+repository = "https://github.com/open-telemetry/otel-arrow"
+readme = "../../../../../../README.md"
+keywords = ["opentelemetry", "otlp", "protobuf", "derive", "macro"]
+categories = ["development-tools::procedural-macro", "encoding", "parsing"]
 
 [lib]
 proc-macro = true

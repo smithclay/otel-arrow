@@ -150,7 +150,7 @@ pub fn derive(msg: &MessageInfo) -> TokenStream {
             &param_args,
             &all_field_initializers,
             &type_params,
-            &create_constructor,
+            create_constructor,
         ),
     };
 

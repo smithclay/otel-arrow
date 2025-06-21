@@ -303,11 +303,7 @@ impl FieldInfo {
         proc_macro2::TokenStream,
     ) {
         let field_name_str = field_ident.to_string();
-        let clean_field_name = if field_name_str.starts_with("r#") {
-            &field_name_str[2..]
-        } else {
-            &field_name_str
-        };
+        let clean_field_name = field_name_str.strip_prefix("r#").unwrap_or(&field_name_str);
 
         let visitor_param_name = syn::Ident::new(
             &format!("{}_visitor", clean_field_name),

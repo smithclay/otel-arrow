@@ -12,8 +12,8 @@ pub fn derive(msg: &MessageInfo) -> TokenStream {
     let outer_name = &msg.outer_name;
     let visitor_name = msg.related_typename("Visitor");
     let visitable_name = msg.related_typename("Visitable");
-    let visitor_method_name = common::visitor_method_name(&outer_name);
-    let visitable_method_name = common::visitable_method_name(&outer_name);
+    let visitor_method_name = common::visitor_method_name(outer_name);
+    let visitable_method_name = common::visitable_method_name(outer_name);
 
     let mut visitable_args: TokenVec = Vec::new();
 
@@ -22,7 +22,7 @@ pub fn derive(msg: &MessageInfo) -> TokenStream {
             // For oneof fields, generate separate parameters for each variant
             for case in oneof_cases {
                 let variant_param_name =
-                    common::oneof_variant_field_or_method_name(&info.ident, &case.name);
+                    common::oneof_variant_field_or_method_name(&info.ident, case.name);
 
                 // Generate visitor trait directly without using FieldInfo methods
                 let visitor_type = if case.is_primitive {
@@ -125,7 +125,7 @@ pub fn derive(msg: &MessageInfo) -> TokenStream {
         if let Some(oneof_cases) = info.oneof.as_ref() {
             for case in oneof_cases {
                 let variant_param_name =
-                    common::oneof_variant_field_or_method_name(&info.ident, &case.name);
+                    common::oneof_variant_field_or_method_name(&info.ident, case.name);
                 param_names.push(variant_param_name);
             }
         } else {
@@ -172,7 +172,7 @@ fn generate_visitable_implementation_body(msg: &MessageInfo) -> proc_macro2::Tok
             for case in oneof_cases {
                 let field_name = &info.ident;
                 let variant_param_name =
-                    common::oneof_variant_field_or_method_name(&info.ident, &case.name);
+                    common::oneof_variant_field_or_method_name(&info.ident, case.name);
                 let value_variant = case.value_variant;
 
                 // Parse the value_variant to get the enum type and variant name
@@ -235,18 +235,13 @@ fn generate_visitable_implementation_body(msg: &MessageInfo) -> proc_macro2::Tok
                     });
                 } else {
                     // For message oneof variants, always call the visitor's visit_* method, passing the value (the visitable)
-                    let visitor_method = match case
+                    let t = case
                         .type_param
                         .split("::")
                         .last()
-                        .unwrap_or(case.type_param)
-                    {
-                        t => {
-                            let base_type_ident =
-                                syn::Ident::new(t, proc_macro2::Span::call_site());
-                            common::visitor_method_name(&base_type_ident)
-                        }
-                    };
+                        .unwrap_or(case.type_param);
+                    let base_type_ident = syn::Ident::new(t, proc_macro2::Span::call_site());
+                    let visitor_method = common::visitor_method_name(&base_type_ident);
 
                     field_calls.push(quote! {
                         if let Some(#variant_path(ref variant_value)) = self.#field_name {

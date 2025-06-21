@@ -17,6 +17,7 @@ pub struct MessageInfo {
 }
 
 impl MessageInfo {
+    #[allow(clippy::new_ret_no_self)]
     pub fn new<F>(input: TokenStream, f: F) -> TokenStream
     where
         F: FnOnce(Self) -> TokenStream,
@@ -49,18 +50,12 @@ impl MessageInfo {
                     None
                 }
             })
-            .expect(&format!(
-                "Missing #[qualified(\"...\")] attribute on struct {}",
-                outer_name
-            ));
+            .unwrap_or_else(|| panic!("Missing #[qualified(\"...\")] attribute on struct {}", outer_name));
 
         // Get required parameters for this type.
         let param_names: Vec<_> = otlp_model::REQUIRED_PARAMS
             .get(type_name.as_str())
-            .expect(&format!(
-                "No required parameters found for OTLP type: {}",
-                type_name
-            ))
+            .unwrap_or_else(|| panic!("No required parameters found for OTLP type: {}", type_name))
             .iter()
             .map(|x| x.to_string())
             .collect();
@@ -102,15 +97,10 @@ impl MessageInfo {
         let param_fields: Vec<_> = param_names
             .iter()
             .filter_map(|param_name| {
-                let field = fields_original.iter().find(|info| {
+                fields_original.iter().find(|info| {
                     let ident = info.ident.to_string();
                     info.is_param && ident == *param_name
-                });
-
-                match field {
-                    Some(field) => Some(field.clone()),
-                    None => None,
-                }
+                }).cloned()
             })
             .collect();
         let builder_fields: Vec<_> = fields_original

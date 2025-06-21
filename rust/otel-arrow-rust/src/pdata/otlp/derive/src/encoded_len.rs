@@ -20,7 +20,7 @@ pub fn derive(msg: &MessageInfo) -> TokenStream {
     let encoded_len_name = msg.related_typename("EncodedLen");
     let visitor_name = msg.related_typename("Visitor");
     let visitable_name = msg.related_typename("Visitable");
-    let visitor_method_name = common::visitor_method_name(&outer_name);
+    let visitor_method_name = common::visitor_method_name(outer_name);
 
     // Generate the children_size helper method body for the visitor
     let visitor_body = generate_helper_method_body(msg);
@@ -102,7 +102,7 @@ fn generate_helper_method_body(msg: &MessageInfo) -> proc_macro2::TokenStream {
             // Process each oneof variant individually
             for case in oneof_cases {
                 let variant_param_name =
-                    common::oneof_variant_field_or_method_name(&info.ident, &case.name);
+                    common::oneof_variant_field_or_method_name(&info.ident, case.name);
 
                 let visitor_instantiation = if case.is_primitive {
                     generate_primitive_visitor_instantiation_oneof(case, &case.tag)
@@ -138,7 +138,7 @@ fn generate_helper_method_body(msg: &MessageInfo) -> proc_macro2::TokenStream {
 
     // Generate the main visitable method call
     let outer_name = &msg.outer_name;
-    let visitable_method_name = common::visitable_method_name(&outer_name);
+    let visitable_method_name = common::visitable_method_name(outer_name);
 
     quote! {
         #(#accumulate_instantiations)*
