@@ -168,6 +168,7 @@ mod test {
     use std::fs::File;
     use std::pin::Pin;
     use std::time::Duration;
+    use std::future::Future;
 
     use datagen::SimpleDataGenOptions;
     use otap_df_engine::exporter::ExporterWrapper;

@@ -192,6 +192,7 @@ mod tests {
     use otap_df_engine::exporter::ExporterWrapper;
     use otap_df_engine::testing::exporter::TestContext;
     use otap_df_engine::testing::exporter::TestRuntime;
+    use std::future::Future;
     use std::net::SocketAddr;
     use tokio::net::TcpListener;
     use tokio::runtime::Runtime;

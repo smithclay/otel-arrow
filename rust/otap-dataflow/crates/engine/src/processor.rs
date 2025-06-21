@@ -130,6 +130,7 @@ mod tests {
     use crate::testing::{CtrlMsgCounters, TestMsg};
     use async_trait::async_trait;
     use serde_json::Value;
+    use std::future::Future;
     use std::pin::Pin;
     use std::time::Duration;
 

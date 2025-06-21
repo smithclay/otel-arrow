@@ -512,6 +512,7 @@ fn display_report_pipeline(
 
 #[cfg(test)]
 mod tests {
+    use std::future::Future;
 
     use crate::perf_exporter::config::Config;
     use crate::perf_exporter::exporter::PerfExporter;
