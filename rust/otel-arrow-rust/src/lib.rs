@@ -36,3 +36,6 @@ pub use decode::decoder::Consumer;
 
 // Debug tests for EncodedLen visitor functionality
 //pub mod debug_test;
+
+// Re-export commonly used types for external consumers
+pub use decode::record_message::RecordMessage;
